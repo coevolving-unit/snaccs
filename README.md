@@ -14,11 +14,16 @@ We ran most analysis steps using [R](https://cran.r-project.org/) (v4.3). We rec
 
 The following files are expected:
 
-* XXX
+* Raw FASTQ files: 10x Chromium single-cell RNA-seq data
+* Sample metadata: Tab-delimited file with sample information including sex
+* Sample lists:
+* sample_list_M.txt: List of male sample IDs
+* sample_list_F.txt: List of female sample IDs
+* Reference data: Human genome (GRCh38) and annotation files
   
 # Pipeline
   
-### initial QC and mapping in CellRanger
+### Initial QC and mapping in CellRanger
 
 * **Key libraries:** stringr
 
@@ -27,198 +32,180 @@ The following files are expected:
 scripts/cellranger.sh
 ```
 
-### Make splici transcriptomes
+### Create Sex-Specific References
+
+```
+# Create sex-specific splici transcriptomes and references
+bash scripts/sex-specific-splici-index.sh
+
+# Build splici transcriptomes
+Rscript scripts/make_splici_txome.R
+
+# Build salmon indices
+bash scripts/build_salmon_indices.sh
+```
+
+### Alevin-fry Quantification
+
+```
+# Create sample lists
+# sample_list_M.txt - one male sample ID per line
+# sample_list_F.txt - one female sample ID per line
+
+# Map reads using Alevin-fry
+sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) --mem=300g --time=12:00:00 scripts/alevin_count_males.sh
+sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) --mem=300g --time=12:00:00 scripts/alevin_count_females.sh
+
+# Generate permit lists
+sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/permit_list_M_all.sh
+sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/permit_list_F_all.sh
+
+# Collate results
+sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/collate_list_M_all.sh
+sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/collate_list_F_all.sh
+
+# Quantify gene expression
+sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/quantify_M.sh
+sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/quantify_F.sh
+
+```
+
+### Create Count Matrices
+
+```
+# Generate SingleCellExperiment objects
+# First create swarm files for batch processing
+Rscript scripts/generate_matrix_swarms.R
+
+# Submit swarm jobs
+swarm -f alevin_matrix_M_R.swarm --module R -g 10
+swarm -f alevin_matrix_F_R.swarm --module R -g 10
+```
+
+### Quality Control and Filtering
+
+```
+# Merge sample metadata
+bash scripts/merge_metadata.sh
+
+# Generate QC reports
+bash scripts/alevin-qc.sh
+
+# Remove ambient RNA using CellBender
+bash scripts/cell-bender.sh
+
+# Remove doublets and low-quality cells
+Rscript scripts/mito-doublets.R
+```
+
+### Integration and Clustering
+
+```
+# Iterative integration, clustering, and filtering
+Rscript scripts/integration-clean.R
+```
+
+### Cell Type Annotation
+
+```
+# Prepare reference datasets
+bash scripts/allen_M1_ref.sh
+bash scripts/allen_MCA_ref.sh  
+bash scripts/allen_MTG_ref.sh
+bash scripts/BRAIN_ref.sh
+
+# Prepare data and run annotation
+bash scripts/prep-for-annotation.sh
+bash scripts/annotation-swarm.sh
+
+# Visualize annotation results
+Rscript scripts/plot_azimuth.R
+```
+
+### Pseudobulk Analysis
+
+```
+# Create pseudobulk samples for downstream analysis
+Rscript scripts/pseudobulk.R
+```
+
+### Proportions
 
 * **Key libraries:** stringr
 
 ```
-# make sex specific splici transcriptomes
-scripts/make_splici_txome.sh
+# Test for sex differences in cell type proportions
+Rscript scripts/plot_calc_proportions.R
 ```
 
-### Mapping and quantification
-
-* **Key libraries:** stringr
+### Differential Expression Analysis
 
 ```
-# map and quantify using Alevin-fry
-scripts/Alevin-fry-unfiltered.sh
+# Run differential expression using limma-voom
+bash scripts/differential_expression.sh
+
+# Run multivariate adaptive shrinkage (MASHR)
+bash scripts/mashr.sh
 ```
 
-### merge metadata
-
-* **Key libraries:** stringr
+### Transcriptome-wide Impact Analysis
 
 ```
-# merge XXX metadata
-scripts/merge_metadata.sh
+# Estimate sex-specific transcriptome-wide impact (sexTWI)
+bash scripts/TRADE.sh
+
+# Leave-one-out validation
+bash scripts/DE-loo-TRADE-jk.sh
+
+# Visualize results
+Rscript scripts/TRADE.R
 ```
 
-### QC
-
-* **Key libraries:** stringr
+### Variance Partitioning
 
 ```
-# map and quantify using Alevin-fry
-scripts/alevin-qc.sh
+# Partition variance across biological and technical factors
+bash scripts/variance-partitioning.sh
+Rscript scripts/plot-variance-partitioning.R
 ```
 
-### Ambient RNA
-
-* **Key libraries:** stringr
+### Functional Enrichment Analysis
 
 ```
-# run CellBender
-scripts/cell-bender.sh
+# Cluster autosomal sex effects
+Rscript scripts/plot-sex-effects.R
+
+# Transcription factor enrichment using HOMER
+bash scripts/homer-clusters.sh
+
+# Gene set enrichment analysis (GSEA)
+bash scripts/gsea-analysis.sh
+
+# GWAS enrichment analysis
+bash scripts/gwas-enrichment.sh
 ```
 
-### Sample QC
-
-* **Key libraries:** stringr
+### Allele-Specific Expression
 
 ```
-# remove doublets
-scripts/mito-doublets.sh
+# Estimate allele-specific expression patterns
+bash scripts/ase-analysis.sh
+Rscript scripts/plot-ase-results.R
 ```
 
-### Integration, clustering, and filtering
+### Output Structure
 
-* **Key libraries:** stringr
-
-```
-# iteratively integrate, cluster, and filter data
-scripts/integration-clean.sh
-```
-
-### Annotation
-
-* **Key libraries:** stringr
-
-```
-# prep allen_M1_ref
-scripts/allen_M1_ref.sh
-# prep allen_MCA_ref
-allen_MCA_ref.sh
-# prep allen_MTG_ref
-allen_MTG_ref.sh
-# prep BRAIN_ref
-BRAIN_ref.sh
-# prep BRAIN_ref_2
-BRAIN_ref_2.sh
-# prep data for annotation
-prep-for-annotation.sh
-# annotate
-annotation-swarm.sh
-# plot annotations
-plot_azimuth.R
-```
-
-### pseudobulk samples
-
-* **Key libraries:** stringr
-
-```
-# pseudobulk samples
-scripts/pseudobulk.R
-```
-
-### test for sex diffs in subclass proportions
-
-* **Key libraries:** stringr
-
-```
-# calculate and test proporitons
-scripts/plot_calc_propotions.R
-```
-
-### differential expression
-
-* **Key libraries:** stringr
-
-```
-# run differential expression (voom-limma)
-scripts/differential_expression.sh
-# run differential expression (mashr)
-scripts/mashr.sh 
-```
-
-### transcriptome wide impact
-
-* **Key libraries:** stringr
-
-```
-# estimate transcriptome wide impact for sex (sexTWI)
-scripts/TRADE.sh
-# leave-one-out
-scripts/DE-loo-TRADE-jk.sh
-# plot results
-scripts/TRADE.R
-```
-
-### variance partitioning
-
-* **Key libraries:** stringr
-
-```
-# run variance partitioning
-scripts/variance-partitioning.sh  
-# plot results
-scripts/plot-variance-partitioning.R
-```
-
-### cluster autosomal sex effects
-
-* **Key libraries:** stringr
-
-```
-# run homer
-scripts/plot-sex-effects.R
-```
-
-### run homer TF enrichment on autosomal clusters
-
-* **Key libraries:** stringr
-
-```
-# run homer
-scripts/homer-clusters.sh  
-# plot results
-scripts/plot-variance-partitioning.R
-```
-
-### run GSEA on autosomal clusters
-
-* **Key libraries:** stringr
-
-```
-# run GSEA
-scripts/homer-clusters.sh  
-# plot results
-scripts/plot-variance-partitioning.R
-```
-
-### run sex-specific GWAS enrichments on autosomal clusters
-
-* **Key libraries:** stringr
-
-```
-# download and prep GWAS data
-scripts/homer-clusters.sh
-# run enrichment
-scripts/homer-clusters.sh  
-# plot results
-scripts/plot-variance-partitioning.R
-```
-
-### allele specific expression
-
-* **Key libraries:** stringr
-
-```
-# estimate ASE
-scripts/homer-clusters.sh  
-# filter and plot results
-scripts/plot-variance-partitioning.R
-```
-
+results/
+├── cellranger/              # Cell Ranger outputs
+├── alevin/                  # Alevin-fry quantification
+│   ├── mapped_reads_M/      # Male samples
+│   └── mapped_reads_F/      # Female samples
+├── qc/                      # Quality control reports
+├── integration/             # Integrated data objects
+├── annotation/              # Cell type annotations
+├── pseudobulk/             # Pseudobulk expression matrices
+├── differential_expression/ # DE analysis results
+├── functional_enrichment/   # Pathway and TF enrichments
+├── variance_partitioning/   # Variance decomposition results
+└── figures/                # Publication-ready plots
 
