@@ -73,11 +73,8 @@ sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/quantify_F
 ### Create Count Matrices
 
 ```
-# Generate SingleCellExperiment objects
-# First create swarm files for batch processing
+# Create SingleCellExperiment objects
 Rscript scripts/generate_matrix_swarms.R
-
-# Submit swarm jobs
 swarm -f alevin_matrix_M_R.swarm --module R -g 10
 swarm -f alevin_matrix_F_R.swarm --module R -g 10
 ```
@@ -85,11 +82,17 @@ swarm -f alevin_matrix_F_R.swarm --module R -g 10
 ### Quality Control and Filtering
 
 ```
+# Generate QC reports
+Rscript scripts/generate_matrix_swarms.R
+swarm -f alevin_qc_m.swarm -g 50 --module R
+swarm -f alevin_qc_f.swarm -g 50 --module R
+```
+
+### Merge Metadata and Further Processing
+
+```
 # Merge sample metadata
 bash scripts/merge_metadata.sh
-
-# Generate QC reports
-bash scripts/alevin-qc.sh
 
 # Remove ambient RNA using CellBender
 bash scripts/cell-bender.sh
