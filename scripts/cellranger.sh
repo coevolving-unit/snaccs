@@ -12,7 +12,7 @@
 
 set -e
 
-module load cellranger/5.0.1
+module load cellranger/5.0.0
 
 # Determine sex and sample from array task ID
 # First get total counts for each sex
@@ -31,7 +31,7 @@ fi
 if (( SLURM_ARRAY_TASK_ID <= MALE_COUNT )); then
     # Process male sample
     sample=$(sed -n ${SLURM_ARRAY_TASK_ID}p sample_list_M.txt)
-    TRANSCRIPTOME="/path/to/your/GRCh38_male_reference"  # Male reference with Y
+    TRANSCRIPTOME="GRCh38_male"  # Male reference with Y
     SEX="M"
     echo "Processing male sample: $sample"
     echo "Using male reference (with Y chromosome)"
@@ -39,7 +39,7 @@ elif (( SLURM_ARRAY_TASK_ID <= MALE_COUNT + FEMALE_COUNT )); then
     # Process female sample
     FEMALE_TASK_ID=$((SLURM_ARRAY_TASK_ID - MALE_COUNT))
     sample=$(sed -n ${FEMALE_TASK_ID}p sample_list_F.txt)
-    TRANSCRIPTOME="/path/to/your/GRCh38_noY_reference"   # Female reference without Y
+    TRANSCRIPTOME="GRCh38_noY"   # Female reference without Y
     SEX="F"
     echo "Processing female sample: $sample"
     echo "Using female reference (Y-masked)"
