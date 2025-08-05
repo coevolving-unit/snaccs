@@ -203,7 +203,14 @@ Rscript scripts/plot_calc_proportions.R
 
 ```
 # Run differential expression using limma-voom
-bash scripts/differential_expression.sh
+Rscript scripts/voom_limma.R
+Rscript scripts/generate_voom_swarms.R
+swarm -f limma_other_class.swarm -g 20 --module R/4.3 
+swarm -f limma_inn_class.swarm -g 20 --module R/4.3  
+swarm -f limma_exn_class.swarm -g 20 --module R/4.3  
+
+# Process DE results
+Rscript scripts/process_de_results.R
 
 # Run multivariate adaptive shrinkage (MASHR)
 bash scripts/mashr.sh
