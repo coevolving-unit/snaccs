@@ -272,16 +272,25 @@ Rscript scripts/plot-varpart.R
 Rscript scripts/plot-sex-effects.R
 ```
 
-### Functional Enrichment Analysis
+### Functional Enrichment Analysis (autosomal clusters)
 
 ```
-# Transcription factor enrichment using HOMER
-bash scripts/homer.sh
+# Get gene lists for HOMER
+Rscript scripts/get_homer_gene_lists.R
 
-# Gene set enrichment analysis (GSEA)
-Rscript scripts/plot_gsea.R
+# Run HOMER
+bash scripts/run_findMotifs_vertebrates.sh
+bash scripts/run_findMotifs_HOCOMOCOv11.sh
+bash scripts/run_findMotifs_sbatch_vertebrates.sh
+bash scripts/run_findMotifs_sbatch_HOCOMOCOv11.sh
 
-# GWAS enrichment analysis
+# Plot HOMER results
+Rscript scripts/plot_homer.R
+
+# Gene ontology (GO) enrichment analysis
+Rscript scripts/run_plot_GO.R
+
+# Sex-specific GWAS enrichment analysis
 Rscript scripts/plot_gwas.R
 ```
 
