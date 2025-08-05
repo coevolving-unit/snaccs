@@ -21,7 +21,7 @@ The following files are expected:
 * sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
 
-* /data/NIMH_scratch/GTEx/process/snRNAseq_fastq/
+/data/NIMH_scratch/GTEx/process/snRNAseq_fastq/
 ├── {batch_id}/
 │   └── FASTQ/
 │       ├── map_file.txt              # Maps sample IDs to file identifiers
