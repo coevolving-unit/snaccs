@@ -101,6 +101,18 @@ alevin_qc_f.R
 Rscript scripts/generate_matrix_swarms.R
 swarm -f alevin_qc_m.swarm -g 50 --module R
 swarm -f alevin_qc_f.swarm -g 50 --module R
+
+# Convert SCE objects to h5ad format for CellBender
+sce-to-h5ad-M.R
+sce-to-h5ad-F.R
+
+Rscript scripts/generate_conversion_swarms.R
+swarm -f sce-to-h5ad-M.swarm --module R/4.3 -g 10
+swarm -f sce-to-h5ad-F.swarm --module R/4.3 -g 10
+
+# Run CellBender for ambient RNA removal (requires GPU)
+sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/cellbender_cuda_M.sh
+sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/cellbender_cuda_F.sh
 ```
 
 ### Merge Metadata and Further Processing
