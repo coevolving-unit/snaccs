@@ -79,35 +79,24 @@ sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/collate_li
 sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/quantify_M.sh
 sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/quantify_F.sh
 
-```
-
-### Create Count Matrices
-
-```
 # Create SingleCellExperiment objects
-alevin_matrix_M.R
-alevin_matrix_F.R
-
+# Individual scripts: alevin_matrix_M.R, alevin_matrix_F.R
 Rscript scripts/generate_matrix_swarms.R
 swarm -f alevin_matrix_M_R.swarm --module R -g 10
 swarm -f alevin_matrix_F_R.swarm --module R -g 10
-```
 
-### Quality Control and Filtering
-
-```
 # Generate QC reports
-alevin_qc_m.R
-alevin_qc_f.R
-
+# Individual scripts: alevin_qc_m.R, alevin_qc_f.R
 Rscript scripts/generate_matrix_swarms.R
 swarm -f alevin_qc_m.swarm -g 50 --module R
 swarm -f alevin_qc_f.swarm -g 50 --module R
+```
 
+### Ambient RNA 
+
+```
 # Convert SCE objects to h5ad format for CellBender
-sce-to-h5ad-M.R
-sce-to-h5ad-F.R
-
+# Individual scripts: sce-to-h5ad-M.R, sce-to-h5ad-F.R
 Rscript scripts/generate_conversion_swarms.R
 swarm -f sce-to-h5ad-M.swarm --module R/4.3 -g 10
 swarm -f sce-to-h5ad-F.swarm --module R/4.3 -g 10
@@ -117,14 +106,26 @@ sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) scripts/cellbender
 sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/cellbender_cuda_F.sh
 ```
 
-### Merge Metadata and Further Processing
+### Merge Metadata 
 
 ```
 # Merge sample metadata
 Rscript scripts/merge_metadata.R
+```
 
-# Remove doublets and low-quality cells
-Rscript scripts/mito-doublets.R
+### QC
+```
+# Convert CellBender results to Seurat objects
+# Individual scripts: bender-seu-M.R, bender-seu-F.R
+Rscript scripts/generate_bender_swarms.R
+swarm -f bender-seu-M.swarm -g 200 --module R/4.3
+swarm -f bender-seu-F.swarm -g 200 --module R/4.3
+
+# Remove mitochondrial cells and doublets, generate QC plots
+# Individual scripts: qc-M.R, qc-F.R
+Rscript scripts/generate_qc_swarms.R
+swarm -f qc-M.swarm -g 15 --module R/4.3
+swarm -f qc-F.swarm -g 15 --module R/4.3
 ```
 
 ### Integration and Clustering
