@@ -123,9 +123,6 @@ sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/cellbender
 # Merge sample metadata
 Rscript scripts/merge_metadata.R
 
-# Remove ambient RNA using CellBender
-bash scripts/cell-bender.sh
-
 # Remove doublets and low-quality cells
 Rscript scripts/mito-doublets.R
 ```
