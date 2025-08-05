@@ -22,15 +22,15 @@ The following files are expected:
 * Reference data: Human genome (GRCh38) and annotation files
 
 /data/snRNAseq_fastq/ <br />
-|-- {batch_id}/ <br />
-|   |-- FASTQ/
-|       |-- map_file.txt              
-|       |-- {file_id}_R1_001.fastq.gz 
-|       |-- {file_id}_R2_001.fastq.gz 
-|       |-- ...
-|-- {another_batch}/
-|   |-- FASTQ/
-|       |-- ...
+├── {batch_id}/ <br />
+│   └── FASTQ/ <br />
+│       ├── map_file.txt              # Maps sample IDs to file identifiers <br />
+│       ├── {file_id}_R1_001.fastq.gz # Read 1 files <br />
+│       ├── {file_id}_R2_001.fastq.gz # Read 2 files <br />
+│       └── ... <br />
+├── {another_batch}/ <br />
+│   └── FASTQ/ <br />
+│       └── ... <br />
   
 # Pipeline
   
@@ -215,17 +215,17 @@ Rscript scripts/plot-ase-results.R
 
 ### Output Structure
 
-results/
-├── cellranger/              # Cell Ranger outputs
-├── alevin/                  # Alevin-fry quantification
-│   ├── mapped_reads_M/      # Male samples
-│   └── mapped_reads_F/      # Female samples
-├── qc/                      # Quality control reports
-├── integration/             # Integrated data objects
-├── annotation/              # Cell type annotations
-├── pseudobulk/             # Pseudobulk expression matrices
-├── differential_expression/ # DE analysis results
-├── functional_enrichment/   # Pathway and TF enrichments
-├── variance_partitioning/   # Variance decomposition results
-└── figures/                # Publication-ready plots
+results/ <br />
+├── cellranger/              # Cell Ranger outputs <br />
+├── alevin/                  # Alevin-fry quantification <br />
+│   ├── mapped_reads_M/      # Male samples <br />
+│   └── mapped_reads_F/      # Female samples <br />
+├── qc/                      # Quality control reports <br />
+├── integration/             # Integrated data objects <br />
+├── annotation/              # Cell type annotations <br />
+├── pseudobulk/             # Pseudobulk expression matrices <br />
+├── differential_expression/ # DE analysis results <br />
+├── functional_enrichment/   # Pathway and TF enrichments <br />
+├── variance_partitioning/   # Variance decomposition results <br />
+└── figures/                # Publication-ready plots <br />
 
