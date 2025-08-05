@@ -268,7 +268,7 @@ Rscript scripts/plot-varpart.R
 ### Plot sex effects
 
 ```
-# Cluster autosomal sex effects
+# Plot sex effects + cluster autosomal sex effects
 Rscript scripts/plot-sex-effects.R
 ```
 
@@ -279,10 +279,10 @@ Rscript scripts/plot-sex-effects.R
 bash scripts/homer.sh
 
 # Gene set enrichment analysis (GSEA)
-bash scripts/gsea.sh
+Rscript scripts/plot_gsea.R
 
 # GWAS enrichment analysis
-bash scripts/gwas.sh
+Rscript scripts/plot_gwas.R
 ```
 
 ### Allele-Specific Expression
