@@ -135,6 +135,12 @@ swarm -f qc-F.swarm -g 15 --module R/4.3
 ### Integration and Clustering
 
 ```
+# Convert Seurant to Anndata
+# Individual scripts: seurat-to-anndata_F.R; seurat-to-anndata_M.R
+Rscript scripts/generate_anndata_swarms.R
+swarm -f seurat-to-anndata_M.swarm -g 15 --module R/4.3
+swarm -f seurat-to-anndata_F.swarm -g 15 --module R/4.3
+
 # Iterative integration, clustering, and filtering
 Rscript scripts/integration-clean.R
 ```
@@ -229,17 +235,19 @@ Rscript scripts/plot-ase-results.R
 
 ### Output Structure
 
+```
 results/ <br />
-├── cellranger/              # Cell Ranger outputs <br />
-├── alevin/                  # Alevin-fry quantification <br />
-│   ├── mapped_reads_M/      # Male samples <br />
-│   └── mapped_reads_F/      # Female samples <br />
-├── qc/                      # Quality control reports <br />
-├── integration/             # Integrated data objects <br />
-├── annotation/              # Cell type annotations <br />
-├── pseudobulk/             # Pseudobulk expression matrices <br />
-├── differential_expression/ # DE analysis results <br />
-├── functional_enrichment/   # Pathway and TF enrichments <br />
-├── variance_partitioning/   # Variance decomposition results <br />
-└── figures/                # Publication-ready plots <br />
+├── cellranger/              # Cell Ranger outputs 
+├── alevin/                  # Alevin-fry quantification 
+│   ├── mapped_reads_M/      # Male samples 
+│   └── mapped_reads_F/      # Female samples
+├── qc/                      # Quality control reports 
+├── integration/             # Integrated data objects 
+├── annotation/              # Cell type annotations 
+├── pseudobulk/             # Pseudobulk expression matrices 
+├── differential_expression/ # DE analysis results 
+├── functional_enrichment/   # Pathway and TF enrichments 
+├── variance_partitioning/   # Variance decomposition results 
+└── figures/                # Publication-ready plots 
+```
 
