@@ -21,7 +21,7 @@ The following files are expected:
 * sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
 
-### Directory Structure
+### FASTQ Directory Structure
 
 ```
 /data/snRNAseq_fastq/
@@ -135,14 +135,33 @@ swarm -f qc-F.swarm -g 15 --module R/4.3
 ### Integration and Clustering
 
 ```
-# Convert Seurant to Anndata
+# Step 1: Convert Seurat objects to AnnData format
 # Individual scripts: seurat-to-anndata_F.R; seurat-to-anndata_M.R
 Rscript scripts/generate_anndata_swarms.R
 swarm -f seurat-to-anndata_M.swarm -g 15 --module R/4.3
 swarm -f seurat-to-anndata_F.swarm -g 15 --module R/4.3
 
-# Iterative integration, clustering, and filtering
-Rscript scripts/integration-clean.R
+# Step 2: Initial data integration and clustering
+python scripts/03_data_integration.py
+
+# Step 3: Cell type annotation based on marker genes  
+python scripts/04_cell_type_annotation.py
+
+# Step 4: Detailed subclustering of specific cell types
+# Use template for custom cell types:
+python scripts/05_subclustering_template.py <input_file> <cell_type> <output_prefix>
+
+# Step 5: Excitatory neuron analysis (4 rounds of iterative clustering)
+python scripts/06_excitatory_neurons.py
+
+# Step 6: Inhibitory neuron analysis (3 rounds of iterative clustering)  
+python scripts/07_inhibitory_neurons.py
+
+# Step 7: Non-neuronal cell analysis (4 rounds of iterative clustering)
+python scripts/08_nonneuronal_cells.py
+
+# Step 8: Final integration and visualization
+python scripts/09_final_integration.py
 ```
 
 ### Cell Type Annotation
