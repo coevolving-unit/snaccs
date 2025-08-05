@@ -167,14 +167,16 @@ python scripts/09_final_integration.py
 ### Cell Type Annotation
 
 ```
-# Prepare reference datasets
-bash scripts/allen_M1_ref.sh
-bash scripts/allen_MCA_ref.sh  
-bash scripts/allen_MTG_ref.sh
-bash scripts/BRAIN_ref.sh
+# Download referendes
+bash scripts/references.sh
 
-# Prepare data and run annotation
+# Prepare references
+Rscript scripts/prepare_references.R
+
+# Prepare data 
 bash scripts/prep-for-annotation.sh
+
+# Run annotation
 bash scripts/annotation-swarm.sh
 
 # Visualize annotation results
