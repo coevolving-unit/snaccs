@@ -74,6 +74,9 @@ sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) scripts/quantify_F
 
 ```
 # Create SingleCellExperiment objects
+alevin_matrix_M.R
+alevin_matrix_F.R
+
 Rscript scripts/generate_matrix_swarms.R
 swarm -f alevin_matrix_M_R.swarm --module R -g 10
 swarm -f alevin_matrix_F_R.swarm --module R -g 10
@@ -83,6 +86,9 @@ swarm -f alevin_matrix_F_R.swarm --module R -g 10
 
 ```
 # Generate QC reports
+alevin_qc_m.R
+alevin_qc_f.R
+
 Rscript scripts/generate_matrix_swarms.R
 swarm -f alevin_qc_m.swarm -g 50 --module R
 swarm -f alevin_qc_f.swarm -g 50 --module R
