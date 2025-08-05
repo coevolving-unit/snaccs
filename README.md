@@ -33,15 +33,6 @@ The following files are expected:
 │       └── ... <br />
   
 # Pipeline
-  
-### Initial QC and mapping in CellRanger
-
-* **Key libraries:** stringr
-
-```
-# run CellRanger
-scripts/cellranger.sh
-```
 
 ### Create Sex-Specific References
 
@@ -54,6 +45,13 @@ Rscript scripts/make_splici_txome.R
 
 # Build salmon indices
 bash scripts/build_salmon_indices.sh
+```
+
+### Cell Ranger QC and quantification
+
+```
+# Run Cell Ranger count
+sbatch --array=1-$(($(wc -l sample_list_M.txt | cut -d ' ' -f 1) + $(wc -l sample_list_F.txt | cut -d ' ' -f 1))) --mem=64g --time=8:00:00 scripts/cellranger.sh
 ```
 
 ### Alevin-fry Quantification
