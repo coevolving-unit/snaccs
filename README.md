@@ -20,6 +20,17 @@ The following files are expected:
 * sample_list_M.txt: List of XY sample IDs
 * sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
+
+* /data/NIMH_scratch/GTEx/process/snRNAseq_fastq/
+├── {batch_id}/
+│   └── FASTQ/
+│       ├── map_file.txt              # Maps sample IDs to file identifiers
+│       ├── {file_id}_R1_001.fastq.gz # Read 1 files
+│       ├── {file_id}_R2_001.fastq.gz # Read 2 files
+│       └── ...
+├── {another_batch}/
+│   └── FASTQ/
+│       └── ...
   
 # Pipeline
   
