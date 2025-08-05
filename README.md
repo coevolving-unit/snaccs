@@ -213,7 +213,11 @@ swarm -f limma_exn_class.swarm -g 20 --module R/4.3
 Rscript scripts/process_de_results.R
 
 # Run multivariate adaptive shrinkage (MASHR)
-bash scripts/mashr.sh
+Rscript scripts/mashr_sex_class_approach1.R
+Rscript scripts/mashr_sex_class_approach2.R
+Rscript scripts/mashr_sex_class_approach3.R
+Rscript scripts/mashr_sex_class_approach4.R
+Rscript scripts/mashr_sex_class_approach5.R
 ```
 
 ### Transcriptome-wide Impact Analysis
