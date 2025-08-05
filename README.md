@@ -189,13 +189,11 @@ Rscript scripts/plot_azimuth.R
 
 ```
 # Create pseudobulk samples for downstream analysis
+python scripts/pseudobulk.py
 Rscript scripts/pseudobulk.R
 ```
 
 ### Proportions
-
-* **Key libraries:** stringr
-
 ```
 # Test for sex differences in cell type proportions
 Rscript scripts/plot_calc_proportions.R
@@ -259,7 +257,7 @@ Rscript scripts/plot-ase-results.R
 ### Output Structure
 
 ```
-results/ <br />
+results/ 
 ├── cellranger/              # Cell Ranger outputs 
 ├── alevin/                  # Alevin-fry quantification 
 │   ├── mapped_reads_M/      # Male samples 
