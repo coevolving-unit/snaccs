@@ -224,7 +224,14 @@ Rscript scripts/mashr_sex_class_approach5.R
 
 ```
 # Estimate sex-specific transcriptome-wide impact (sexTWI)
-bash scripts/TRADE.sh
+Rscript scripts/TRADE.R
+Rscript scripts/generate_TRADE_swarms.R
+swarm -f TRADE_other_class.swarm --module R/4.3 
+swarm -f TRADE_inn_class.swarm --module R/4.3 
+swarm -f TRADE_exn_class.swarm --module R/4.3
+
+# Process and combine results
+Rscript scripts/process_TRADE.R
 
 # Leave-one-out validation
 bash scripts/DE-loo-TRADE-jk.sh
