@@ -21,16 +21,20 @@ The following files are expected:
 * sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
 
-/data/snRNAseq_fastq/ <br />
-├── {batch_id}/ <br />
-│   └── FASTQ/ <br />
-│       ├── map_file.txt              # Maps sample IDs to file identifiers <br />
-│       ├── {file_id}_R1_001.fastq.gz # Read 1 files <br />
-│       ├── {file_id}_R2_001.fastq.gz # Read 2 files <br />
-│       └── ... <br />
-├── {another_batch}/ <br />
-│   └── FASTQ/ <br />
-│       └── ... <br />
+### Directory Structure
+
+```
+/data/snRNAseq_fastq/
+├── {batch_id}/
+│   └── FASTQ/
+│       ├── map_file.txt              # Maps sample IDs to file identifiers
+│       ├── {file_id}_R1_001.fastq.gz # Read 1 files
+│       ├── {file_id}_R2_001.fastq.gz # Read 2 files
+│       └── ...
+├── {another_batch}/
+│   └── FASTQ/
+│       └── ...
+```
   
 # Pipeline
 
