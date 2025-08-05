@@ -248,25 +248,41 @@ Rscript scripts/plot_TRADE.R
 ### Variance Partitioning
 
 ```
-# Partition variance across biological and technical factors
-bash scripts/variance-partitioning.sh
-Rscript scripts/plot-variance-partitioning.R
+# Partition variance within cell types
+Rscript scripts/varpart.R
+Rscript scripts/generate_varpart_swarms.R
+swarm -f varpart_exn_class.swarm --module R/4.3 
+swarm -f varpart_inn_class.swarm --module R/4.3 
+swarm -f varpart_other_class.swarm --module R/4.3 
+
+# Process results
+Rscript scripts/process_varpart.R
+
+# Partition variance overall
+Rscript scripts/varpart_all.R
+
+# Plot results
+Rscript scripts/plot-varpart.R
+```
+
+### Plot sex effects
+
+```
+# Cluster autosomal sex effects
+Rscript scripts/plot-sex-effects.R
 ```
 
 ### Functional Enrichment Analysis
 
 ```
-# Cluster autosomal sex effects
-Rscript scripts/plot-sex-effects.R
-
 # Transcription factor enrichment using HOMER
-bash scripts/homer-clusters.sh
+bash scripts/homer.sh
 
 # Gene set enrichment analysis (GSEA)
-bash scripts/gsea-analysis.sh
+bash scripts/gsea.sh
 
 # GWAS enrichment analysis
-bash scripts/gwas-enrichment.sh
+bash scripts/gwas.sh
 ```
 
 ### Allele-Specific Expression
