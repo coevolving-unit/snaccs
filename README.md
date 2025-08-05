@@ -98,7 +98,7 @@ swarm -f alevin_qc_f.swarm -g 50 --module R
 
 ```
 # Merge sample metadata
-bash scripts/merge_metadata.sh
+Rscript scripts/merge_metadata.R
 
 # Remove ambient RNA using CellBender
 bash scripts/cell-bender.sh
