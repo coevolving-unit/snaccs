@@ -22,15 +22,15 @@ The following files are expected:
 * Reference data: Human genome (GRCh38) and annotation files
 
 /data/snRNAseq_fastq/
-├── {batch_id}/
-│   └── FASTQ/
-│       ├── map_file.txt              
-│       ├── {file_id}_R1_001.fastq.gz 
-│       ├── {file_id}_R2_001.fastq.gz 
-│       └── ...
-├── {another_batch}/
-│   └── FASTQ/
-│       └── ...
+|-- {batch_id}/
+|   |-- FASTQ/
+|       |-- map_file.txt              
+|       |-- {file_id}_R1_001.fastq.gz 
+|       |-- {file_id}_R2_001.fastq.gz 
+|       |-- ...
+|-- {another_batch}/
+|   |-- FASTQ/
+|       |-- ...
   
 # Pipeline
   
