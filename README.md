@@ -174,10 +174,12 @@ bash scripts/references.sh
 Rscript scripts/prepare_references.R
 
 # Prepare data 
-bash scripts/prep-for-annotation.sh
+python scripts/prep-for-annotation.py
 
-# Run annotation
-bash scripts/annotation-swarm.sh
+# Generate swarms and run annotation
+# Individual file: azimuth.R
+Rscript scripts/generate_azimuth_swarm.R
+swarm -f azimuth.swarm --module R/4.3 -g 200
 
 # Visualize annotation results
 Rscript scripts/plot_azimuth.R
