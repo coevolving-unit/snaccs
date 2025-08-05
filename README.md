@@ -47,6 +47,12 @@ Rscript scripts/make_splici_txome.R
 bash scripts/build_salmon_indices.sh
 ```
 
+### Create sample lists
+```
+# sample_list_M.txt - one male sample ID per line
+# sample_list_F.txt - one female sample ID per line
+```
+
 ### Cell Ranger QC and quantification
 
 ```
@@ -57,10 +63,6 @@ sbatch --array=1-$(($(wc -l sample_list_M.txt | cut -d ' ' -f 1) + $(wc -l sampl
 ### Alevin-fry Quantification
 
 ```
-# Create sample lists
-# sample_list_M.txt - one male sample ID per line
-# sample_list_F.txt - one female sample ID per line
-
 # Map reads using Alevin-fry
 sbatch --array=1-$(wc -l sample_list_M.txt | cut -d ' ' -f 1) --mem=300g --time=12:00:00 scripts/alevin_count_males.sh
 sbatch --array=1-$(wc -l sample_list_F.txt | cut -d ' ' -f 1) --mem=300g --time=12:00:00 scripts/alevin_count_females.sh
