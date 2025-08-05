@@ -57,4 +57,74 @@ exn_res = readRDS('exn_age_TRADE_class_outliers.rds')
 all_res = rbind(other_res, inn_res, exn_res)
 saveRDS(all_res, file = 'all_AGE_TRADE_class_outliers.rds') # done
 
+# General function to process data
+process_trade_data <- function(regions, cell_types, file_prefix, suffix) {
+  res <- data.frame()
+  for (region in regions) {
+    print(region)
+    for (cell_type in cell_types) {
+      print(cell_type)
+      file_path <- paste(region, cell_type, "TRADE-jk-pval.rds", sep = "_")
+      if (file.exists(file_path)) {
+        loaded <- readRDS(file_path)
+        loaded = data.frame(p = loaded)
+        loaded$region <- region
+        loaded$celltype <- cell_type
+        res <- rbind(res, loaded)
+      } else {
+        print(paste('Not analyzed:', file_path))
+      }
+    }
+  }
+  print(paste(file_prefix, '_','TRADE_jk_pval','_', suffix, '.rds', sep = ""))
+  saveRDS(res, file = paste(file_prefix, '_','TRADE_jk_pval','_', suffix, '.rds', sep = ""))
+}
+
+# Process data for subclass
+process_trade_data(regions, subclass_other, 'other', 'class') 
+process_trade_data(regions, subclass_inn, 'inn', 'class') 
+process_trade_data(regions, subclass_exn, 'exn', 'class') 
+
+# General function to process data
+process_trade_data <- function(regions, cell_types, file_prefix, suffix) {
+  res <- data.frame()
+  for (region in regions) {
+    print(region)
+    for (cell_type in cell_types) {
+      print(cell_type)
+      file_path <- paste(region, cell_type, "DE-loo-TRADE-jk.rds", sep = "_")
+      if (file.exists(file_path)) {
+        loaded <- readRDS(file_path)
+        loaded = data.frame(loaded)
+        loaded$region <- region
+        loaded$celltype <- cell_type
+        res <- rbind(res, loaded)
+      } else {
+        print(paste('Not analyzed:', file_path))
+      }
+    }
+  }
+  print(paste(file_prefix, '_','TRADE_loo','_', suffix, '.rds', sep = ""))
+  saveRDS(res, file = paste(file_prefix, '_','TRADE_loo','_', suffix, '.rds', sep = ""))
+}
+
+# Process data for subclass
+process_trade_data(regions, subclass_other, 'other', 'class') 
+process_trade_data(regions, subclass_inn, 'inn', 'class') 
+process_trade_data(regions, subclass_exn, 'exn', 'class') 
+
+# sex + class
+other_res = readRDS('other_TRADE_jk_pval_class.rds')
+inn_res = readRDS('inn_TRADE_jk_pval_class.rds')
+exn_res = readRDS('exn_TRADE_jk_pval_class.rds')
+all_res = rbind(other_res, inn_res, exn_res)
+saveRDS(all_res, file = 'all_TRADE_jk_pval_class.rds') 
+
+other_res = readRDS('other_TRADE_loo_class.rds')
+inn_res = readRDS('inn_TRADE_loo_class.rds')
+exn_res = readRDS('exn_TRADE_loo_class.rds')
+all_res = rbind(other_res, inn_res, exn_res)
+saveRDS(all_res, file = 'all_TRADE_loo_class.rds')
+
+
 
