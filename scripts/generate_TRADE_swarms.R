@@ -11,7 +11,20 @@ for (i in 1:length(regions)) {
 		line = paste("Rscript TRADE.R", regions[i], subtype_now[k], sep = " ")
 		write(line, file = "TRADE_other_class.swarm", append = TRUE, sep = "\n")
 	}}
-	
+
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-leave-one-out.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-other-class-leave-one-out.swarm", append = TRUE, sep = "\n")
+	}}
+
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-perm.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-other-class-perm.swarm", append = TRUE, sep = "\n")
+	}}
+
+
 class_short = "inn"	
 subtype_now = c('ADARB2','Chandelier','VIP','SST','LAMP5','PVALB','PAX6')
 
@@ -21,6 +34,18 @@ for (i in 1:length(regions)) {
 		write(line, file = "TRADE_inn_class.swarm", append = TRUE, sep = "\n")
 	}}
 
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-leave-one-out.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-inn-class-leave-one-out.swarm", append = TRUE, sep = "\n")
+	}}
+
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-perm.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-inn-class-perm.swarm", append = TRUE, sep = "\n")
+	}}
+
 class_short = "exc"
 subtype_now = c('L23IT','L4IT','L5IT','L6IT','L5ET','L56NP','L6b','L6CT')
 
@@ -28,4 +53,16 @@ for (i in 1:length(regions)) {
 	for(k in 1:length(subtype_now)) {
 		line = paste("Rscript TRADE.R", regions[i], subtype_now[k], sep = " ")
 		write(line, file = "TRADE_exn_class.swarm", append = TRUE, sep = "\n")
+	}}
+
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-leave-one-out.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-exn-class-leave-one-out.swarm", append = TRUE, sep = "\n")
+	}}
+
+for (i in 1:length(regions)) {
+	for(k in 1:length(subtype_now)) {
+		line = paste("Rscript TRADE-perm.R", regions[i], subtype_now[k], sep = " ")
+		write(line, file = "TRADE-exn-class-perm.swarm", append = TRUE, sep = "\n")
 	}}
