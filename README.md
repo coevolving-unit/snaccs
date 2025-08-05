@@ -231,15 +231,18 @@ Rscript scripts/generate_TRADE_swarms.R
 swarm -f TRADE_other_class.swarm --module R/4.3 
 swarm -f TRADE_inn_class.swarm --module R/4.3 
 swarm -f TRADE_exn_class.swarm --module R/4.3
+swarm -f TRADE-other-class-leave-one-out.swarm --module R/4.3 
+swarm -f TRADE-inn-class-leave-one-out.swarm --module R/4.3 
+swarm -f TRADE-exn-class-leave-one-out.swarm --module R/4.3 
+swarm -f TRADE-other-class-perm.swarm --module R/4.3 
+swarm -f TRADE-inn-class-perm.swarm --module R/4.3 
+swarm -f TRADE-exn-class-perm.swarm --module R/4.3 
 
 # Process and combine results
 Rscript scripts/process_TRADE.R
 
-# Leave-one-out validation
-bash scripts/DE-loo-TRADE-jk.sh
-
 # Visualize results
-Rscript scripts/TRADE.R
+Rscript scripts/plot_TRADE.R
 ```
 
 ### Variance Partitioning
