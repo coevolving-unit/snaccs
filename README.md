@@ -14,11 +14,11 @@ We ran most analysis steps using [R](https://cran.r-project.org/) (v4.3). We rec
 
 The following files are expected:
 
-* Raw FASTQ files: 10x Chromium single-cell RNA-seq data
+* Raw FASTQ files: 10x Chromium single-nuclei RNA-seq data
 * Sample metadata: Tab-delimited file with sample information including sex
 * Sample lists:
-* sample_list_M.txt: List of male sample IDs
-* sample_list_F.txt: List of female sample IDs
+** sample_list_M.txt: List of XY sample IDs
+** sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
   
 # Pipeline
