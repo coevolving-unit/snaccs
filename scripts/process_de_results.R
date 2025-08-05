@@ -69,3 +69,30 @@ process_de_results(regions, subclass_exn, 'SEX_DE_limma_outliers', 'exn_SEX_res_
 process_de_results(regions, subclass_other, 'AGE_DE_limma_outliers', 'other_AGE_res_outliers', 'class') # done
 process_de_results(regions, subclass_inn, 'AGE_DE_limma_outliers', 'inn_AGE_res_outliers', 'class') # done
 process_de_results(regions, subclass_exn, 'AGE_DE_limma_outliers', 'exn_AGE_res_outliers', 'class') # done
+
+# normalized expression per class
+other_res = readRDS('other_normalized_expression_class_corrected_outliers.rds')
+inn_res = readRDS('inn_normalized_expression_class_corrected_outliers.rds')
+exn_res = readRDS('exn_normalized_expression_class_corrected_outliers.rds')
+all_res = merge(other_res, inn_res, by = 'row.names', all = T)
+rownames(all_res) = all_res$Row.names
+all_res = all_res[,-1]
+all_res = merge(all_res, exn_res, by = 'row.names', all = T)
+rownames(all_res) = all_res$Row.names
+all_res = all_res[,-1]
+saveRDS(all_res, file = 'all_res_normalized_expression_class_corrected_outliers.rds') # done
+
+# sex + class
+other_res = readRDS('other_SEX_res_outliers_class_corrected.rds')
+inn_res = readRDS('inn_SEX_res_outliers_class_corrected.rds')
+exn_res = readRDS('exn_SEX_res_outliers_class_corrected.rds')
+all_res = rbind(other_res, inn_res, exn_res)
+saveRDS(all_res, file = 'all_res_outliers_SEX_class_corrected.rds') # done
+
+# age + class
+other_res = readRDS('other_AGE_res_outliers_class_corrected.rds')
+inn_res = readRDS('inn_AGE_res_outliers_class_corrected.rds')
+exn_res = readRDS('exn_AGE_res_outliers_class_corrected.rds')
+all_res = rbind(other_res, inn_res, exn_res)
+saveRDS(all_res, file = 'all_res_outliers_AGE_class_corrected.rds') # done
+
