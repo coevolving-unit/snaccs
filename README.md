@@ -61,7 +61,8 @@ bash scripts/build_salmon_indices.sh
 
 ```
 # Run Cell Ranger count
-sbatch --array=1-$(($(wc -l sample_list_M.txt | cut -d ' ' -f 1) + $(wc -l sample_list_F.txt | cut -d ' ' -f 1))) --mem=64g --time=8:00:00 scripts/cellranger.sh
+sbatch --array=1-$(wc -l < sample_list_M.txt) --mem=64G --time=8:00:00 --cpus-per-task=8 scripts/cellranger_males.sh
+sbatch --array=1-$(wc -l < sample_list_F.txt) --mem=64G --time=8:00:00 --cpus-per-task=8 scripts/cellranger_females.sh
 ```
 
 ### Alevin-fry Quantification
