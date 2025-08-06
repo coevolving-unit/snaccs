@@ -14,8 +14,12 @@ set -e
 
 module load cellranger/5.0.1
 
+# Configuration - use environment variables or defaults
+METADATA_FILE=${REGION_SAMPLES_LIST:-"data/metadata/region_samples_list.txt"}
+FASTQ_BASE_DIR=${FASTQ_BASE_PATH:-"data/fastq"}
+REFERENCE_DIR=${REFERENCE_PATH:-"data/references"}
+
 # Determine sex and sample from array task ID
-# First get total counts for each sex
 MALE_COUNT=0
 FEMALE_COUNT=0
 
@@ -31,7 +35,7 @@ fi
 if (( SLURM_ARRAY_TASK_ID <= MALE_COUNT )); then
     # Process male sample
     sample=$(sed -n ${SLURM_ARRAY_TASK_ID}p sample_list_M.txt)
-    TRANSCRIPTOME="GRCh38_male"  # Male reference with Y
+    TRANSCRIPTOME="${REFERENCE_DIR}/GRCh38_male"  # Male reference with Y
     SEX="M"
     echo "Processing male sample: $sample"
     echo "Using male reference (with Y chromosome)"
@@ -39,7 +43,7 @@ elif (( SLURM_ARRAY_TASK_ID <= MALE_COUNT + FEMALE_COUNT )); then
     # Process female sample
     FEMALE_TASK_ID=$((SLURM_ARRAY_TASK_ID - MALE_COUNT))
     sample=$(sed -n ${FEMALE_TASK_ID}p sample_list_F.txt)
-    TRANSCRIPTOME="GRCh38_noY"   # Female reference without Y
+    TRANSCRIPTOME="${REFERENCE_DIR}/GRCh38_noY"   # Female reference without Y
     SEX="F"
     echo "Processing female sample: $sample"
     echo "Using female reference (Y-masked)"
@@ -51,19 +55,19 @@ fi
 # Function to find FASTQ directories and sample names using metadata approach
 find_fastq_info_metadata() {
     local sample_id=$1
-    local metadata_file=${2:-"metadata/region_samples_list.txt"}
-    local fastq_base_dir=${3:-"/data/NIMH_scratch/GTEx/process/snRNAseq_fastq"}
+    local metadata_file=$2
+    local fastq_base_dir=$3
     
     echo "Finding FASTQ info for sample: $sample_id using metadata approach"
     
-    # Create temporary directory for this sample
-    temp_dir="cellranger_temp_${sample_id}"
+    # Create temporary directory in results
+    temp_dir="results/cellranger/temp_${sample_id}"
     mkdir -p "$temp_dir"
     
     # Get batch information for current sample
     if [[ ! -f "$metadata_file" ]]; then
         echo "Error: Metadata file not found: $metadata_file"
-        echo "Please ensure region_samples_list.txt is available"
+        echo "Please ensure region_samples_list.txt is available in data/metadata/"
         exit 1
     fi
     
@@ -123,18 +127,11 @@ find_fastq_info_metadata() {
     rm -rf "$temp_dir"
 }
 
-# Find FASTQ information for this sample using metadata approach
-METADATA_FILE="metadata/region_samples_list.txt"
-FASTQ_BASE_DIR="/data/NIMH_scratch/GTEx/process/snRNAseq_fastq"
-
-# Allow customization via environment variables
-METADATA_FILE=${REGION_SAMPLES_LIST:-$METADATA_FILE}
-FASTQ_BASE_DIR=${FASTQ_BASE_PATH:-$FASTQ_BASE_DIR}
-
+# Find FASTQ information for this sample
 find_fastq_info_metadata "$sample" "$METADATA_FILE" "$FASTQ_BASE_DIR"
 
-# Create output directory
-mkdir -p cellranger_output
+# Create output directory - standardized location
+mkdir -p results/cellranger
 
 # Run Cell Ranger count
 echo "Running Cell Ranger count for sample: $sample"
@@ -151,8 +148,8 @@ cellranger count \
 
 # Move output to organized directory
 if [[ -d "${sample}" ]]; then
-    mv "${sample}" cellranger_output/
-    echo "Cell Ranger output moved to cellranger_output/${sample}"
+    mv "${sample}" results/cellranger/
+    echo "Cell Ranger output moved to results/cellranger/${sample}"
 fi
 
 echo "Cell Ranger processing completed for sample: $sample"
