@@ -29,17 +29,24 @@ sample=$(sed -n ${SLURM_ARRAY_TASK_ID}p $sample_list)
 
 echo "Generating permit list for sample: $sample"
 
-# Download barcode whitelist if not present
-if [[ ! -f "3M-february-2018.txt" ]]; then
-    wget https://teichlab.github.io/scg_lib_structs/data/3M-february-2018.txt.gz
-    gunzip 3M-february-2018.txt.gz
+# Create output directory
+mkdir -p results/alevin/permit_lists
+
+# Download barcode whitelist if not present in data directory
+mkdir -p data/references/barcodes
+if [[ ! -f "data/references/barcodes/3M-february-2018.txt" ]]; then
+    echo "Downloading 10x barcode whitelist..."
+    wget https://teichlab.github.io/scg_lib_structs/data/3M-february-2018.txt.gz -O data/references/barcodes/3M-february-2018.txt.gz
+    gunzip data/references/barcodes/3M-february-2018.txt.gz
 fi
 
 # Generate permit list
+echo "Running alevin-fry generate-permit-list..."
 alevin-fry generate-permit-list \
     -d fw \
-    -i mapped_reads_M/"${sample}"_map \
-    -o mapped_reads_M/"${sample}"_quant \
-    --unfiltered-pl 3M-february-2018.txt
+    -i results/alevin/mapped_reads_M/"${sample}"_map \
+    -o results/alevin/mapped_reads_M/"${sample}"_quant \
+    --unfiltered-pl data/references/barcodes/3M-february-2018.txt
 
 echo "Permit list generation completed for sample: $sample"
+echo "Output saved to: results/alevin/mapped_reads_M/${sample}_quant"
