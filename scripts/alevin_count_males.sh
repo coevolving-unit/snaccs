@@ -14,45 +14,50 @@ set -e
 
 module load salmon
 
-# Set paths
-index=af_tutorial_splici/grch38_splici_idx
+# Configuration - use environment variables or defaults
+METADATA_FILE=${REGION_SAMPLES_LIST:-"data/metadata/region_samples_list.txt"}
+FASTQ_BASE_DIR=${FASTQ_BASE_PATH:-"data/fastq"}
+REFERENCE_DIR=${REFERENCE_PATH:-"data/references"}
+
+# Set paths using standardized structure
+index="${REFERENCE_DIR}/af_tutorial_splici/grch38_splici_idx"
 sample_list=${1:-sample_list_M.txt}
 
 # Get current sample ID
 sample=$(sed -n ${SLURM_ARRAY_TASK_ID}p $sample_list)
 echo "Processing sample: ${sample}"
 
-# Create sample directory
-mkdir -p mapped_reads_M/"${sample}"
+# Create sample directory in standardized location
+mkdir -p results/alevin/mapped_reads_M/"${sample}"
 
 # Function to find FASTQ files using metadata approach
 find_fastq_files_metadata() {
     local sample_id=$1
-    local metadata_file=${2:-"metadata/region_samples_list.txt"}
-    local fastq_base_dir=${3:-"/data/snRNAseq_fastq"}
+    local metadata_file=$2
+    local fastq_base_dir=$3
     
     echo "Finding FASTQ files for sample: $sample_id using metadata approach"
     
     # Get batch information for current sample
     if [[ ! -f "$metadata_file" ]]; then
         echo "Error: Metadata file not found: $metadata_file"
-        echo "Please ensure region_samples_list.txt is available"
+        echo "Please ensure region_samples_list.txt is available in data/metadata/"
         exit 1
     fi
     
     # Extract batch info (assuming column 13 is sample_id and column 10 is batch)
-    awk -F'\t' -v sample="$sample_id" 'NR == 1 || $13 == sample' "$metadata_file" > mapped_reads_M/"${sample}"_batch.txt
+    awk -F'\t' -v sample="$sample_id" 'NR == 1 || $13 == sample' "$metadata_file" > results/alevin/mapped_reads_M/"${sample}"_batch.txt
     
-    if [[ ! -s mapped_reads_M/"${sample}"_batch.txt ]]; then
+    if [[ ! -s results/alevin/mapped_reads_M/"${sample}"_batch.txt ]]; then
         echo "Error: No batch information found for sample $sample_id"
         exit 1
     fi
     
     # Get batch ID
-    awk -F'\t' '{print $10}' mapped_reads_M/"${sample}"_batch.txt | sort | uniq > mapped_reads_M/"${sample}"_batch2.txt
-    sed -i '1d' mapped_reads_M/"${sample}"_batch2.txt  # Remove header
+    awk -F'\t' '{print $10}' results/alevin/mapped_reads_M/"${sample}"_batch.txt | sort | uniq > results/alevin/mapped_reads_M/"${sample}"_batch2.txt
+    sed -i '1d' results/alevin/mapped_reads_M/"${sample}"_batch2.txt  # Remove header
     
-    batch=$(cat mapped_reads_M/"${sample}"_batch2.txt)
+    batch=$(cat results/alevin/mapped_reads_M/"${sample}"_batch2.txt)
     
     if [[ -z "$batch" ]]; then
         echo "Error: Could not determine batch for sample $sample_id"
@@ -68,45 +73,45 @@ find_fastq_files_metadata() {
         exit 1
     fi
     
-    awk -v sample="$sample_id" '$1 == sample' "$map_file" > mapped_reads_M/"${sample}".txt
+    awk -v sample="$sample_id" '$1 == sample' "$map_file" > results/alevin/mapped_reads_M/"${sample}".txt
     
-    if [[ ! -s mapped_reads_M/"${sample}".txt ]]; then
+    if [[ ! -s results/alevin/mapped_reads_M/"${sample}".txt ]]; then
         echo "Error: No entries found in map file for sample $sample_id"
         exit 1
     fi
     
     # Get unique file identifiers
-    awk '{print $2}' mapped_reads_M/"${sample}".txt | sort | uniq > mapped_reads_M/"${sample}"_uniq.txt
+    awk '{print $2}' results/alevin/mapped_reads_M/"${sample}".txt | sort | uniq > results/alevin/mapped_reads_M/"${sample}"_uniq.txt
     
     # Find R1 and R2 files
     fastq_dir="${fastq_base_dir}/${batch}/FASTQ"
     
-    for f in $(cat mapped_reads_M/"${sample}"_uniq.txt); do 
+    for f in $(cat results/alevin/mapped_reads_M/"${sample}"_uniq.txt); do 
         ls "$fastq_dir" | grep -E "${f}\." | grep -E "R1" || true
-    done > mapped_reads_M/"${sample}"_R1.txt
+    done > results/alevin/mapped_reads_M/"${sample}"_R1.txt
     
-    for f in $(cat mapped_reads_M/"${sample}"_uniq.txt); do 
+    for f in $(cat results/alevin/mapped_reads_M/"${sample}"_uniq.txt); do 
         ls "$fastq_dir" | grep -E "${f}\." | grep -E "R2" || true
-    done > mapped_reads_M/"${sample}"_R2.txt
+    done > results/alevin/mapped_reads_M/"${sample}"_R2.txt
     
     # Check if files were found
-    if [[ ! -s mapped_reads_M/"${sample}"_R1.txt || ! -s mapped_reads_M/"${sample}"_R2.txt ]]; then
+    if [[ ! -s results/alevin/mapped_reads_M/"${sample}"_R1.txt || ! -s results/alevin/mapped_reads_M/"${sample}"_R2.txt ]]; then
         echo "Error: No R1/R2 FASTQ files found for sample $sample_id"
         exit 1
     fi
     
     # Add full path prefix
     prefix="${fastq_dir}/"
-    awk -v prefix="$prefix" '{print prefix $0}' mapped_reads_M/"${sample}"_R1.txt > mapped_reads_M/"${sample}"_R1_prefix.txt
-    awk -v prefix="$prefix" '{print prefix $0}' mapped_reads_M/"${sample}"_R2.txt > mapped_reads_M/"${sample}"_R2_prefix.txt
+    awk -v prefix="$prefix" '{print prefix $0}' results/alevin/mapped_reads_M/"${sample}"_R1.txt > results/alevin/mapped_reads_M/"${sample}"_R1_prefix.txt
+    awk -v prefix="$prefix" '{print prefix $0}' results/alevin/mapped_reads_M/"${sample}"_R2.txt > results/alevin/mapped_reads_M/"${sample}"_R2_prefix.txt
     
     # Convert to space-delimited format
-    cat mapped_reads_M/"${sample}"_R1_prefix.txt | xargs -rd'\n' > mapped_reads_M/"${sample}"_R1_space.txt
-    cat mapped_reads_M/"${sample}"_R2_prefix.txt | xargs -rd'\n' > mapped_reads_M/"${sample}"_R2_space.txt
+    cat results/alevin/mapped_reads_M/"${sample}"_R1_prefix.txt | xargs -rd'\n' > results/alevin/mapped_reads_M/"${sample}"_R1_space.txt
+    cat results/alevin/mapped_reads_M/"${sample}"_R2_prefix.txt | xargs -rd'\n' > results/alevin/mapped_reads_M/"${sample}"_R2_space.txt
     
     # Verify files exist
-    r1_files=$(cat mapped_reads_M/"${sample}"_R1_space.txt)
-    r2_files=$(cat mapped_reads_M/"${sample}"_R2_space.txt)
+    r1_files=$(cat results/alevin/mapped_reads_M/"${sample}"_R1_space.txt)
+    r2_files=$(cat results/alevin/mapped_reads_M/"${sample}"_R2_space.txt)
     
     echo "Found R1 files: $r1_files"
     echo "Found R2 files: $r2_files"
@@ -123,17 +128,20 @@ find_fastq_files_metadata() {
     fi
 }
 
+# Find FASTQ files for this sample
+find_fastq_files_metadata "$sample" "$METADATA_FILE" "$FASTQ_BASE_DIR"
+
 # Run Alevin
 echo "Running Alevin mapping for sample: $sample"
 salmon alevin \
-    -i $index \
+    -i "$index" \
     -p 16 \
     -l IU \
     --chromiumV3 \
     --sketch \
-    -1 $(cat mapped_reads_M/"${sample}"_R1_space.txt) \
-    -2 $(cat mapped_reads_M/"${sample}"_R2_space.txt) \
-    -o mapped_reads_M/"${sample}"_map \
-    --tgMap transcriptome_splici_fl86/transcriptome_splici_fl86_t2g.tsv
+    -1 $(cat results/alevin/mapped_reads_M/"${sample}"_R1_space.txt) \
+    -2 $(cat results/alevin/mapped_reads_M/"${sample}"_R2_space.txt) \
+    -o results/alevin/mapped_reads_M/"${sample}"_map \
+    --tgMap "${REFERENCE_DIR}/transcriptome_splici_fl86/transcriptome_splici_fl86_t2g.tsv"
 
 echo "Alevin mapping completed for sample: $sample"
