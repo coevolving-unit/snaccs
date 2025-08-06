@@ -9,7 +9,7 @@
 # Process BAM files - extract X chromosome reads and rename barcodes
 
 # Define directories
-DIR="/data/cellranger/"
+DIR="/data/cellranger_output/"
 OUTDIR="/data/Xbams/"
 
 # Load required modules
