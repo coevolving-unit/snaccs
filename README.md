@@ -290,7 +290,18 @@ Rscript scripts/plot_homer.R
 # Gene ontology (GO) enrichment analysis
 Rscript scripts/run_plot_GO.R
 
-# Sex-specific GWAS enrichment analysis
+# Download sex-specific GWAS 
+bash scripts/download_gwas.sh
+
+# Process sex-specific GWAS
+bash scripts/process_gwas.sh
+chmod +x process_gwas.sh
+./process_gwas.sh
+
+# Run GWAS enrichments
+Rscript scripts/run_gwas.R
+
+# Visualize sex-specific GWAS enrichment
 Rscript scripts/plot_gwas.R
 ```
 
