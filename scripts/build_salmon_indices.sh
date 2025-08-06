@@ -16,27 +16,32 @@ module load salmon
 
 echo "Building salmon indices for splici transcriptomes"
 
-# Create directories
-mkdir -p af_tutorial_splici af_tutorial_splici_noY
+# Create directories in standardized location
+mkdir -p data/references/salmon_indices/af_tutorial_splici
+mkdir -p data/references/salmon_indices/af_tutorial_splici_noY
 
 # Build male index
 echo "Building male (with Y chromosome) salmon index"
-cd af_tutorial_splici
+cd data/references/salmon_indices/af_tutorial_splici
+
 salmon index \
-    -t ../transcriptome_splici_fl86/transcriptome_splici_fl86.fa \
+    -t ../../transcriptomes/transcriptome_splici_fl86/transcriptome_splici_fl86.fa \
     -i grch38_splici_idx \
     -p 16
 
-cd ..
+cd ../../../..
 
 # Build female index  
 echo "Building female (Y-masked) salmon index"
-cd af_tutorial_splici_noY
+cd data/references/salmon_indices/af_tutorial_splici_noY
+
 salmon index \
-    -t ../transcriptome_splici_fl_noY86/transcriptome_splici_fl86.fa \
+    -t ../../transcriptomes/transcriptome_splici_fl_noY86/transcriptome_splici_fl86.fa \
     -i grch38_splici_idx \
     -p 16
 
-cd ..
+cd ../../../..
 
 echo "Salmon index building completed successfully"
+echo "Male index: data/references/salmon_indices/af_tutorial_splici/grch38_splici_idx"
+echo "Female index: data/references/salmon_indices/af_tutorial_splici_noY/grch38_splici_idx"
