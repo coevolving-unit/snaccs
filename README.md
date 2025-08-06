@@ -21,10 +21,35 @@ The following files are expected:
 * sample_list_F.txt: List of XX sample IDs
 * Reference data: Human genome (GRCh38) and annotation files
 
+### Directory Structure
+
+```
+project_root/
+├── data/
+│   ├── fastq/                        # Raw FASTQ files
+│   ├── references/                   # Reference genomes and indices
+│   └── metadata/                     # Sample metadata files
+├── results/
+│   ├── cellranger/                   # Cell Ranger outputs
+│   ├── alevin/                       # Alevin-fry quantification
+│   ├── cellbender/                   # Ambient RNA removal
+│   ├── qc/                           # Quality control reports
+│   ├── integration/                  # Integrated datasets
+│   ├── annotation/                   # Cell type annotations
+│   ├── pseudobulk/                   # Pseudobulk expression
+│   ├── differential_expression/       # DE analysis results
+│   ├── variance_partitioning/        # Variance analysis
+│   ├── functional_enrichment/        # GO/pathway analysis
+│   ├── gwas_enrichment/              # GWAS enrichment
+│   └── allelic_expression/           # X chromosome analysis
+├── scripts/                          # All analysis scripts
+└── logs/                             # Job log files
+```
+
 ### FASTQ Directory Structure
 
 ```
-/data/snRNAseq_fastq/
+data/fastq/
 ├── {batch_id}/
 │   └── FASTQ/
 │       ├── map_file.txt              # Maps sample IDs to file identifiers
