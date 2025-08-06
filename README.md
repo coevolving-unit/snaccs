@@ -314,26 +314,16 @@ Rscript scripts/plot_gwas.R
 ### Allele-Specific Expression
 
 ```
-# Estimate allele-specific expression patterns
-bash scripts/ase-analysis.sh
-Rscript scripts/plot-ase-results.R
+# Estimate allele-specific expression
+bash scripts/setup_genotyping.sh
+bash scripts/process_bams.sh
+python scripts/process_bams.py
+bash scripts/cellsnp_mode2b.sh
+bash scripts/extract_barcodes.sh
+bash scripts/cellsnp_mode1a.sh
+Rscript scripts/process_cellsnp_results.R
+bash scripts/run_annovar.sh
+Rscript scripts/qc_analysis.R
+Rscript scripts/combine_results.R
+Rscript scripts/plot_allelic_escape.R
 ```
-
-### Output Structure
-
-```
-results/ 
-├── cellranger/              # Cell Ranger outputs 
-├── alevin/                  # Alevin-fry quantification 
-│   ├── mapped_reads_M/      # Male samples 
-│   └── mapped_reads_F/      # Female samples
-├── qc/                      # Quality control reports 
-├── integration/             # Integrated data objects 
-├── annotation/              # Cell type annotations 
-├── pseudobulk/             # Pseudobulk expression matrices 
-├── differential_expression/ # DE analysis results 
-├── functional_enrichment/   # Pathway and TF enrichments 
-├── variance_partitioning/   # Variance decomposition results 
-└── figures/                # Publication-ready plots 
-```
-
