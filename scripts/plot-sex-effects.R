@@ -199,6 +199,8 @@ combo$match = ifelse(sign(combo$beta.x) == sign(combo$beta.y), 'match', 'diff')
 diffsign = subset(combo, match == 'diff')
 diffsign$key = paste(diffsign$region.x, diffsign$cell.x, diffsign$gene.x)
 
+write.csv(diffsign, file = 'diffsign.csv')
+
 mashsig = subset(combo, lfsr.x < 0.05)
 table(sign(mashsig$beta.x) == sign(mashsig$beta.y))
 6526/(52605+6526) # 11% significant signals have opposite sign in limma
@@ -309,8 +311,8 @@ sexres = cbind(sexres, d)
 sexres = sexres[,c(1,3,6:8)]
 colnames(sexres) = c('gene','beta','lfsr','cell','region')
 sexres$key = paste(sexres$region, sexres$cell, sexres$gene)
-#sexres$beta = ifelse(sexres$key %in% diffsign$key, 0, sexres$beta) # keep mashr as is
-#sexres$lfsr = ifelse(sexres$key %in% diffsign$key, 1, sexres$lfsr) # keep mashr as is
+#sexres$beta = ifelse(sexres$key %in% diffsign$key, 0, sexres$beta) # run if generating significant genes per cluster (lines 751-785)
+#sexres$lfsr = ifelse(sexres$key %in% diffsign$key, 1, sexres$lfsr) # run if generating significant genes per cluster (lines 751-785)
 sexres$bias = ifelse(sexres$beta > 0 & sexres$lfsr < 0.05, 'male', 'ns')
 sexres$bias = ifelse(sexres$beta < 0 & sexres$lfsr < 0.05, 'female', sexres$bias)
 table(sexres$bias)
