@@ -10,7 +10,7 @@ As Biowulf uses the [slurm](https://slurm.schedmd.com/documentation.html) schedu
 
 We ran most analysis steps using [R](https://cran.r-project.org/) (v4.3). We recommend the following utility or visualization packages to extend base R's functionality.
 
-Processed data (.h5ad) can be found at https://zenodo.org/records/23045291.
+Processed data (.h5ad) can be found at https://zenodo.org/records/23087296.
 
 # Inputs
 
